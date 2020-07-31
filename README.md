@@ -3,7 +3,7 @@
 
 ## Overview of this Application
 
-This Java Web Application is not Microservices Application but standard Java Web Application which is wrote by using Java EE 7 technologies.  
+This Java Web Application is not Microservices Application but standard Java Web Application which is wrote by using Java EE 8 technologies.  
 
 At first, you can select and expand the Continent (North America, Asia, Africa, Europe, South America, Oceania, Antarctica) in the left side of the menu, then you can see the countries in the Continent. Then you can select the one country, then you can see the cities where has the number of the population over 1,000,000 in right side of the screen like follows.  
 All of the data is coming from Managed [Azure Database for MySQL](https://docs.microsoft.com/azure/mysql/?WT.mc_id=docs-github-yoterada).
@@ -622,12 +622,375 @@ Azure Deployment Slot is very useful for evaluation, and you can create multiple
 
 # Implement DB Access code from Web Application
 
-## Explain how to implement JPA which access to MySQL
+## Implement JPA code which access to MySQL
 
-TBD
+[Jakarta Persistence](https://jakarta.ee/specifications/persistence/2.2/) API is the Java API for the management of persistence and object/relational mapping framework in Jakarta EE and Java SE environments.  
+
+***Note  
+Tomcat is not the Jakarta EE compiant Application Server and it doesn't support the Transaction API support. So in the Tomcat environment, you need to implement the JPA code same as Java SE environment.***
+
+### Create Entity Class which map to the DB TABLE
+
+I already created the following DB TABLE in MySQL.
+
+```
+mysql> DESC `city`;
++-------------+----------+------+-----+---------+----------------+
+| Field       | Type     | Null | Key | Default | Extra          |
++-------------+----------+------+-----+---------+----------------+
+| ID          | int(11)  | NO   | PRI | NULL    | auto_increment |
+| Name        | char(35) | NO   |     |         |                |
+| CountryCode | char(3)  | NO   | MUL |         |                |
+| District    | char(20) | NO   |     |         |                |
+| Population  | int(11)  | NO   |     | 0       |                |
++-------------+----------+------+-----+---------+----------------+
+5 rows in set (0.01 sec)
+
+mysql> DESC `country`;
++----------------+---------------------------------------------------------------------------------------+------+-----+---------+-------+
+| Field          | Type                                                                                  | Null | Key | Default | Extra |
++----------------+---------------------------------------------------------------------------------------+------+-----+---------+-------+
+| Code           | char(3)                                                                               | NO   | PRI |         |       |
+| Name           | char(52)                                                                              | NO   |     |         |       |
+| Continent      | enum('Asia','Europe','North America','Africa','Oceania','Antarctica','South America') | NO   |     | Asia    |       |
+| Region         | char(26)                                                                              | NO   |     |         |       |
+| SurfaceArea    | decimal(10,2)                                                                         | NO   |     | 0.00    |       |
+| IndepYear      | smallint(6)                                                                           | YES  |     | NULL    |       |
+| Population     | int(11)                                                                               | NO   |     | 0       |       |
+| LifeExpectancy | decimal(3,1)                                                                          | YES  |     | NULL    |       |
+| GNP            | decimal(10,2)                                                                         | YES  |     | NULL    |       |
+| GNPOld         | decimal(10,2)                                                                         | YES  |     | NULL    |       |
+| LocalName      | char(45)                                                                              | NO   |     |         |       |
+| GovernmentForm | char(45)                                                                              | NO   |     |         |       |
+| HeadOfState    | char(60)                                                                              | YES  |     | NULL    |       |
+| Capital        | int(11)                                                                               | YES  |     | NULL    |       |
+| Code2          | char(2)                                                                               | NO   |     |         |       |
++----------------+---------------------------------------------------------------------------------------+------+-----+---------+-------+
+15 rows in set (0.02 sec)
+```
+
+In order to create the mapped class, please create following Entity class?
+
+#### Country Entity Class
+
+```java
+@Entity
+@Table(name = "country")
+@NamedQueries({
+    @NamedQuery(name = "Country.findAll", query = "SELECT c FROM Country c"),
+    @NamedQuery(name = "Country.findByCode", query = "SELECT c FROM Country c WHERE c.code = :code"),
+    @NamedQuery(name = "Country.findByName", query = "SELECT c FROM Country c WHERE c.name = :name"),
+    @NamedQuery(name = "Country.findAllContinent", query = "SELECT DISTINCT c.continent FROM Country c"),
+    @NamedQuery(name = "Country.findByContinent", query = "SELECT c FROM Country c WHERE c.continent = :continent"),
+    @NamedQuery(name = "Country.findByRegion", query = "SELECT c FROM Country c WHERE c.region = :region"),
+    @NamedQuery(name = "Country.findBySurfaceArea", query = "SELECT c FROM Country c WHERE c.surfaceArea = :surfaceArea"),
+    @NamedQuery(name = "Country.findByIndepYear", query = "SELECT c FROM Country c WHERE c.indepYear = :indepYear"),
+    @NamedQuery(name = "Country.findByPopulation", query = "SELECT c FROM Country c WHERE c.population = :population"),
+    @NamedQuery(name = "Country.findByLifeExpectancy", query = "SELECT c FROM Country c WHERE c.lifeExpectancy = :lifeExpectancy"),
+    @NamedQuery(name = "Country.findByGnp", query = "SELECT c FROM Country c WHERE c.gnp = :gnp"),
+    @NamedQuery(name = "Country.findByGNPOld", query = "SELECT c FROM Country c WHERE c.gNPOld = :gNPOld"),
+    @NamedQuery(name = "Country.findByLocalName", query = "SELECT c FROM Country c WHERE c.localName = :localName"),
+    @NamedQuery(name = "Country.findByGovernmentForm", query = "SELECT c FROM Country c WHERE c.governmentForm = :governmentForm"),
+    @NamedQuery(name = "Country.findByHeadOfState", query = "SELECT c FROM Country c WHERE c.headOfState = :headOfState"),
+    @NamedQuery(name = "Country.findByCapital", query = "SELECT c FROM Country c WHERE c.capital = :capital"),
+    @NamedQuery(name = "Country.findByCode2", query = "SELECT c FROM Country c WHERE c.code2 = :code2")})
+public class Country implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 3)
+    @Column(name = "Code")
+    private String code;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 52)
+    @Column(name = "Name")
+    private String name;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 13)
+    @Column(name = "Continent")
+    private String continent;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 26)
+    @Column(name = "Region")
+    private String region;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "SurfaceArea")
+    private BigDecimal surfaceArea;
+    @Column(name = "IndepYear")
+    private Short indepYear;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "Population")
+    private int population;
+    @Column(name = "LifeExpectancy")
+    private BigDecimal lifeExpectancy;
+    @Column(name = "GNP")
+    private BigDecimal gnp;
+    @Column(name = "GNPOld")
+    private BigDecimal gNPOld;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "LocalName")
+    private String localName;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "GovernmentForm")
+    private String governmentForm;
+    @Size(max = 60)
+    @Column(name = "HeadOfState")
+    private String headOfState;
+    @Column(name = "Capital")
+    private Integer capital;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 2)
+    @Column(name = "Code2")
+    private String code2;
+
+    @JsonbTransient
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "countryCode")
+    private Collection<City> cityCollection;
+
+    // Setter & Getter
+}
+```
+
+#### City Entity Class
+
+```java
+@Entity
+@Table(name = "city")
+@NamedQueries({
+    @NamedQuery(name = "City.findAll", query = "SELECT c FROM City c"),
+    @NamedQuery(name = "City.findById", query = "SELECT c FROM City c WHERE c.id = :id"),
+    @NamedQuery(name = "City.findByName", query = "SELECT c FROM City c WHERE c.name = :name"),
+    @NamedQuery(name = "City.findByDistrict", query = "SELECT c FROM City c WHERE c.district = :district"),
+    @NamedQuery(name = "City.findByPopulation", query = "SELECT c FROM City c WHERE c.population = :population"),
+    @NamedQuery(name = "City.findOver1MillPopulation", query = "SELECT c FROM City c WHERE c.countryCode.code = :countrycode AND c.population > 1000000 ORDER BY c.population DESC")
+})
+public class City implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "ID")
+    private Integer id;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 35)
+    @Column(name = "Name")
+    private String name;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
+    @Column(name = "District")
+    private String district;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "Population")
+    private int population;
+    @JoinColumn(name = "CountryCode", referencedColumnName = "Code")
+    @ManyToOne(optional = false)
+    private Country countryCode;
+    
+    //Setter & Getter
+}
+```
+
+### Create util Class for crete the EntityManagerFactory
+
+Then you created the utility class to create the `EntityManagerFactory` as follows. If you are using the JPA, you can configure the `JDBC_DRIVER`, `JDBC_URL`, `DB_USER` and `DB_PASSWORD` in `persistence.xml` file by deafult.  
+
+However I would like to configure the info out side of the code, so I implemented to get the info from Environment Variable Value as follows.
+
+So if you configure the `JDBC_DRIVER`, `JDBC_URL`, `DB_USER` and `DB_PASSWORD` on Environment Variable, you can overwrite the settings.
 
 
-## Explain how to implement JSF (PrimeFaces)
+```java
+@ApplicationScoped
+public class EntityManagerUtil {
+
+    private static final String PU_NAME = "JPAWorldDatasourcePU";
+    @PersistenceUnit(unitName = PU_NAME)
+    private static final EntityManagerFactory entityManagerFactory;
+
+    static {
+        //You can implement the following by using MicroProfile Config.
+        //https://github.com/eclipse/microprofile-config
+
+        Map<String, String> systemEnv = System.getenv();
+        Map<String, Object> overwrite = new HashMap<>();
+
+        systemEnv.forEach((var key, var value) -> {
+            switch (key) {
+                case "JDBC_DRIVER":
+                    overwrite.put("toplink.jdbc.driver", value);
+                    overwrite.put("javax.persistence.jdbc.driver", value);
+                    break;
+                case "JDBC_URL":
+                    overwrite.put("toplink.jdbc.url", value);
+                    overwrite.put("javax.persistence.jdbc.url", value);
+                    break;
+                case "DB_USER":
+                    overwrite.put("toplink.jdbc.user", value);
+                    overwrite.put("javax.persistence.jdbc.user", value);
+                    break;
+                case "DB_PASSWORD":
+                    overwrite.put("toplink.jdbc.password", value);
+                    overwrite.put("javax.persistence.jdbc.password", value);
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        try {
+            entityManagerFactory = Persistence.createEntityManagerFactory(PU_NAME, overwrite);
+        } catch (Throwable ex) {
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+
+    public static EntityManager getEntityManager() {
+        return entityManagerFactory.createEntityManager();
+    }
+
+    public static void closeEntityManagerConnection() {
+        entityManagerFactory.close();
+    }
+}
+```
+
+### Create Backend Service
+
+After you created the Entity classes, you can create the backend service(busines logic).  
+In this class, I implemented 3 methods.
+
+* `findAllContinents()` : Get all continents like Asia, North America, Europe etc.
+* `findItemByContinent(String continent)` : Get all countries in specific continent
+* `findOver1MillPopulation(String countrycode)` : Get cities over 1 million population in the specific country.
+
+
+```java
+@RequestScoped
+public class CityService {
+
+    public List<City> findOver1MillPopulation(String countrycode) {
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+        TypedQuery<City> query = entityManager.createNamedQuery("City.findOver1MillPopulation", City.class);
+        query.setParameter("countrycode", countrycode);
+        return query.getResultList();
+    }
+
+    public List<String> findAllContinents() {
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+        TypedQuery<String> query = entityManager.createNamedQuery("Country.findAllContinent", String.class);
+        return query.getResultList();
+    }
+
+    public List<Country> findItemByContinent(String continent) {
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+        TypedQuery<Country> query = entityManager.createNamedQuery("Country.findByContinent", Country.class);
+        query.setParameter("continent", continent);
+        return query.getResultList();
+    }
+```
+
+In the implementation code, I used JPA Named Query to query. For example, `City.findOver1MillPopulation` in `TypedQuery<City> query = entityManager.createNamedQuery("City.findOver1MillPopulation", City.class);
+` which is defined in the `City` Entity class.
+
+
+## Implement the JSF (PrimeFaces) Backing Bean
+
+In order to inovke the Backend Service which implemented the above from the View code, I need to implmenete the JSF `Backing Bean` as follows.
+
+
+```java
+@Named("countryBackingBean")
+@ViewScoped
+public class IndexBackingBean implements Serializable {
+
+    @Inject
+    CityService citySvc;
+
+    private List<City> city;
+    private String countrycode;
+    private MenuModel model;
+
+    public List<City> getCity() {
+        return citySvc.findOver1MillPopulation(countrycode);
+    }
+
+    public MenuModel getModel() {
+        return model;
+    }
+
+    @PostConstruct
+    public void init() {
+        model = new DefaultMenuModel();
+
+        //First submenu        
+        DefaultSubMenu firstSubmenu = new DefaultSubMenu();
+        firstSubmenu.setLabel("Select Country");
+
+        getAllContinents().stream().forEach(continents -> {
+            DefaultSubMenu submenue = DefaultSubMenu
+                    .builder()
+                    .id(continents)
+                    .expanded(true)
+                    .label(continents)
+                    .icon("pi pi-home")
+                    .elements(createSecondMenue(continents))
+                    .build();
+            firstSubmenu.getElements().add(submenue);
+        });
+        model.getElements().add(firstSubmenu);
+
+    }
+
+    private List<MenuElement> createSecondMenue(String continent) {
+        List<Country> countryInContinents = getCountryInContinents(continent);
+        return countryInContinents.stream().map((var country) -> {
+            String countryName = country.getName();
+            countrycode = country.getCode();
+            Map<String, List<String>> param = new HashMap<>();
+            param.put("countrycode", Arrays.asList(countrycode));
+
+            return DefaultMenuItem
+                    .builder()
+                    .ajax(true)
+                    .command("#{countryBackingBean.selectMenueOfCountry}")
+                    .update(":mainform:citydata")
+                    .value(countryName)
+                    .params(param)
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+    public List<String> getAllContinents() {
+        return citySvc.findAllContinents();
+    }
+
+    public List<Country> getCountryInContinents(String continent) {
+        return citySvc.findItemByContinent(continent);
+    }
+
+    public void selectMenueOfCountry(MenuActionEvent event) {
+        countrycode = event.getMenuItem().getParams().get("countrycode").get(0);
+    }
+}
+```
+
+## Implement the JSF (PrimeFaces) View
 
 [JavaServer™ Faces (JSF)](https://javaee.github.io/javaserverfaces-spec/) is the standard component-oriented user interface (UI) framework for the Java EE platform. JSF is included in the Java EE platform. JSF works equally as well as a standalone web framework.  
 
@@ -736,6 +1099,8 @@ In order to use it, I added the `p:dataTable` tag in index.xtml.
 ```
 
 ### Following is the Created index.xhtml
+
+![](./images/screenshot.jpg)
 
 ```xml
 <!DOCTYPE html>
