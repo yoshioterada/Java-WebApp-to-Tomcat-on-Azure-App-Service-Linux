@@ -71,15 +71,16 @@ In order to install and create the MySQL, please refer to the following document
 ## Create Maven Project for Java Web App
 
 ```bash
-mvn archetype:generate -DarchetypeGroupId=de.rieckpil.archetypes \
+mvn archetype:generate \
+    -DarchetypeGroupId=de.rieckpil.archetypes \
     -DarchetypeArtifactId=javaee8-jsf \
     -DarchetypeVersion=1.0.1 \
-	-DgroupId=com.microsoft.azure.samples \
-     -Dpackage=com.microsoft.azure.samples \
-     -Dversion=0.0.1-SNAPSHOT \
-	-DartifactId=azure-javaweb-app \
-	-Darchetype.interactive=false \
-	--batch-mode \
+    -DgroupId=com.microsoft.azure.samples \
+    -Dpackage=com.microsoft.azure.samples \
+    -Dversion=0.0.1-SNAPSHOT \
+    -DartifactId=azure-javaweb-app \
+    -Darchetype.interactive=false \
+    --batch-mode 
 ```
 
 ```bash  
@@ -117,6 +118,28 @@ pom.xml	src
 The above directory structure will be automatically created and it is created to run on Payara on Docker. However we will deploy the Web Application to Tomcat 9 not Docker in this time. So please delete some files?
 
 ## Modify the pom.xml file
+
+### Modify
+
+```xml
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+```
+
+### Delete
+
+```xml
+	<repositories>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+```
+
+### Modify
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -347,51 +370,263 @@ After finished the command, you will be able to see following additional configu
       </plugin>
 ```
 
+### You can modify the name of Azure Resource Group and location
+
+The above configuration will create and deploy to the following environment.
+
+* Azure Resoure Group : `azure-javaweb-app-1595955014168-rg`
+* Azure Resource Name : `azure-javaweb-app-1595955014168`
+* Azure Resoruce Location : `westeurope`
+
+If you would like to change the Resource Group Name, Resource Name and Location, you can change the configuration like follows.
+
+```
+        <configuration>
+          <schemaVersion>V2</schemaVersion>
+          <resourceGroup>azure-javaweb-app</resourceGroup>
+          <appName>azure-javaweb-app</appName>
+          <pricingTier>P1v2</pricingTier>
+          <region>japaneast</region>
+          <runtime>
+```
+
+## Modify the Java Source Code
+
+```
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Hello World JSF 2.3</title>
+</h:head>
+
+<h:body>
+	<p:outputPanel style="display:block">
+		<h3 style="text-align: center">#{sampleBean.message}</h3>
+	</p:outputPanel>
+</h:body>
+
+</html>
+```
+
+Please remove following from html tag?
+`xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"`
+
+
+```
+package sample;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+
+@Named
+@RequestScoped
+public class SampleBean {
+
+	private String message;
+
+	public String getMessage() {
+		message = "Hello World";
+		return message;
+	}
+}
+```
+
+## Deploy and Run on Local Environment
+
+After you implemented the above code, you can deploy to the Tomcat in Local.
+If you access to Tomcat server from Browser, you can see like following.s
+
+![Application Running on Local Tomcat](./images/local-tomcat.png)
+
 
 ## Deploy Java Web App to Azure App Service
 
--------------------
-TODO: Execute Again for this
--------------------
+If you would like to deploy the Java Web App to Azure, you can execute the following command.
+
+`mvn azure-webapp:deploy`
+
+Following is the example of the command.
 
 ```
-https://azure-javaweb-app.azurewebsites.net/
+$ mvn clean package  azure-webapp:deploy
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------< com.microsoft.azure.samples:azure-javaweb-app >------------
+[INFO] Building azure-javaweb-app 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ azure-javaweb-app ---
+[INFO] Deleting /Users/yoterada/azure-javaweb-app/target
+
+[INFO] --- azure-webapp-maven-plugin:1.9.1:deploy (default-cli) @ azure-javaweb-app ---
+[INFO] Auth Type : AZURE_CLI, Auth Files : [/Users/yoterada/.azure/azureProfile.json, /Users/yoterada/.azure/accessTokens.json]
+[INFO] [Correlation ID: 3a3d53b9-7f39-4e46-b42f-3d4c91ed34df] Instance discovery was successful
+[INFO] Subscription : Microsoft Azure Internal Billing-CDA(f77aafe8-6be4-4d3d-bd9c-d0c37687ef70)
+[INFO] Target Web App doesn't exist. Creating a new one...
+[INFO] Creating App Service Plan 'ServicePlan2932ed54-b243-4c68'...
+[INFO] Successfully created App Service Plan.
+[INFO] Successfully created Web App.
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource to /Users/yoterada/azure-javaweb-app/target/azure-webapp/azure-javaweb-app-1596171354654-22bf0c41-c96b-4ef9-a96a-4b48de368374
+[INFO] Trying to deploy artifact to azure-javaweb-app-1596171354654...
+[INFO] Deploying the war file azure-javaweb-app.war...
+[INFO] Successfully deployed the artifact to https://azure-javaweb-app-1596171354654.azurewebsites.net
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  07:55 min
+[INFO] Finished at: 2020-07-31T14:23:01+09:00
+[INFO] ------------------------------------------------------------------------
 ```
 
+If you acces to the URL in the above logs, you can see the following screen.
+
+```
+[INFO] Successfully deployed the artifact to 
+https://azure-javaweb-app-1596171354654.azurewebsites.net
+```
+
+![Java Web App Running on Azure App Service Linux Tomcat](./images/azure-tomcat.png)
 
 
-### If you configure the `Deployment Slot`, it will be following result
+## Deploy the Java Web App to Staging Environment (Deployment Slot)
 
-If you configure the `Deployment Slot`, following XML will be added to the above XML definition.
+If you execute the `mvn azure-webapp:config` command again, you can configure the [DeploymentSlot](https://docs.microsoft.com/azure/app-service/deploy-staging-slots?WT.mc_id=docs-github-yoterada) as follows. 
+
+### Configure the Deployment Slot
+
+```
+$ mvn azure-webapp:config
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------< com.microsoft.azure.samples:azure-javaweb-app >------------
+[INFO] Building azure-javaweb-app 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- azure-webapp-maven-plugin:1.9.1:config (default-cli) @ azure-javaweb-app ---
+Please choose which part to config
+1. Application
+2. Runtime
+3. DeploymentSlot
+Enter index to use: 3
+Deploy to slot?(Y/N): y
+Define value for slotName(Default: azure-javaweb-app-1596171354654-slot): 
+Define value for configurationSource: 
+Please confirm webapp properties
+AppName : azure-javaweb-app-1596171354654
+ResourceGroup : azure-javaweb-app-1596171354654-rg
+Region : westeurope
+PricingTier : PremiumV2_P1v2
+OS : Linux
+RuntimeStack : TOMCAT 9.0-java11
+Deploy to slot : true
+Slot name : azure-javaweb-app-1596171354654-slot
+ConfigurationSource : 
+Confirm (Y/N)? : y
+[INFO] Saving configuration to pom.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  02:15 min
+[INFO] Finished at: 2020-07-31T14:44:33+09:00
+[INFO] ------------------------------------------------------------------------
+$ 
+```
+
+After finished the above command, you can see the following XML in the `pom.xml`.
 
 ```xml
           <deploymentSlot>
-            <name>staging-slot</name>
+            <name>azure-javaweb-app-1596171354654-slot</name>
             <configurationSource></configurationSource>
           </deploymentSlot>
 ```
 
-And If you executed the `mvn azure-webapp:deploy` command, new `Deployment Slot` will be automatically created and deploy the Web App to it.
+### Deploy the Java Web App the Deployment Slot
+
+After the configuration, if you executed the `mvn azure-webapp:deploy` command, new `Deployment Slot` will be automatically created and deploy the Web App to it.
+
+Please modify the source code like follows.
+
+```java
+package sample;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+
+@Named
+@RequestScoped
+public class SampleBean {
+
+	private String message;
+
+	public String getMessage() {
+		message = "Hello World 2";
+		return message;
+	}
+}
+```
+
+Then, you build the new package and deploy it to the Deployment Slot?
 
 ```bash
-$ mvn azure-webapp:deploy
+$ mvn clean package azure-webapp:deploy
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------< com.microsoft.azure.samples:azure-javaweb-app >------------
+[INFO] Building azure-javaweb-app 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ azure-javaweb-app ---
+[INFO] Deleting /Users/yoterada/azure-javaweb-app/target
+
+[INFO] [Correlation ID: a533c9be-a1b8-4209-b789-a43016e5827c] Instance discovery was successful
+[INFO] Subscription : Microsoft Azure Internal Billing-CDA(f77aafe8-6be4-4d3d-bd9c-d0c37687ef70)
+[INFO] Updating target Web App...
+[INFO] Successfully updated Web App.
 [INFO] Target Deployment Slot doesn't exist. Creating a new one...
 [INFO] Creating a new deployment slot and copying configuration from parent...
 [INFO] Successfully created the Deployment Slot.
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 1 resource to /private/tmp/TMP/azure-javaweb-app/target/azure-webapp/azure-javaweb-app-8c4fb3f9-d8e5-4d62-85ab-8ffe6248387f
-[INFO] Trying to deploy artifact to staging-slot...
+[INFO] Copying 1 resource to /Users/yoterada/azure-javaweb-app/target/azure-webapp/azure-javaweb-app-bcdbe5b1-78a3-47c5-9b8f-567a4e16911e
+[INFO] Trying to deploy artifact to azure-javaweb-app-1596171354654-slot...
 [INFO] Deploying the war file azure-javaweb-app.war...
-[INFO] Successfully deployed the artifact to https://azure-javaweb-app-staging-slot.azurewebsites.net
+[INFO] Successfully deployed the artifact to https://azure-javaweb-app-azure-javaweb-app-1596171354654-slot.azurewebsites.net
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  01:46 min
-[INFO] Finished at: 2020-07-29T02:01:11+09:00
+[INFO] Total time:  02:15 min
+[INFO] Finished at: 2020-07-31T14:52:53+09:00
 [INFO] ------------------------------------------------------------------------
 ```
 
+Then you can see the follogin logs.
 
+```
+[INFO] Successfully deployed the artifact to https://azure-javaweb-app-azure-javaweb-app-1596171354654-slot.azurewebsites.net
+```
+
+![Java Web App Running on Azure App Service Linux Tomcat Deployment Slot](./images/azure-tomcat-deployment-slot.png)
+
+
+Azure Deployment Slot is very useful for evaluation, and you can create multiple deployment slot like follows.
+
+![Deployment Slot](./images/azure-portal-deployment-slot.png)
+
+
+# Implement DB Access code from Web Application
+
+## Explain how to implement JSF (PrimeFaces)
+
+TBD
+
+## Explain how to implement JPA which access to MySQL
+
+TBD
 
 ## Final Directory Structure of this Project
 
