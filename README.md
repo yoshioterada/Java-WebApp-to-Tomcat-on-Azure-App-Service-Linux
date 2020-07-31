@@ -618,15 +618,183 @@ Azure Deployment Slot is very useful for evaluation, and you can create multiple
 ![Deployment Slot](./images/azure-portal-deployment-slot.png)
 
 
+
+
 # Implement DB Access code from Web Application
-
-## Explain how to implement JSF (PrimeFaces)
-
-TBD
 
 ## Explain how to implement JPA which access to MySQL
 
 TBD
+
+
+## Explain how to implement JSF (PrimeFaces)
+
+[JavaServer™ Faces (JSF)](https://javaee.github.io/javaserverfaces-spec/) is the standard component-oriented user interface (UI) framework for the Java EE platform. JSF is included in the Java EE platform. JSF works equally as well as a standalone web framework.  
+
+[PrimeFaces](https://www.primefaces.org/) is a collection of rich UI components for JavaServer Faces. All widgets are open source and free to use under Apache License. If you use the [PrimeFaces](https://www.primefaces.org/), you can use many rich UI components in the [showcase](https://www.primefaces.org/showcase/).
+
+![](./images/screenshot.jpg)
+
+In this Java Web Application, I used following thee UI components.
+
+* `p:layout` : [Layout](https://www.primefaces.org/showcase/ui/panel/layout/element.xhtml)
+* `p:panelMenu` : [PanelMenu](https://www.primefaces.org/showcase/ui/menu/panelMenu.xhtml)
+* `p:dataTable` : [DataTable - Paginator](https://www.primefaces.org/showcase/ui/data/datatable/paginator.xhtml)
+
+
+## Create Web Page in index.xhtml
+
+### Create Layout
+
+![](./images/primefaces-Layout.png)
+
+At first, I used the `PrimeFaces Layout` UI component.
+In order to use it, I added the `p:layout` tag in the index.xhtml as follows.
+
+```xml
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>World DB App</title>
+    </h:head>
+    <h:body>
+        <h:form id="mainform">
+            <p:layout id="layout" style="min-width:400px;min-height:800px;">
+                <p:layoutUnit position="west" resizable="true" size="200" minSize="40" maxSize="400">
+                    LEFT SIDE
+                </p:layoutUnit>
+
+                <p:layoutUnit position="center" id="center">
+                    RIGHT SIDE
+                </p:layoutUnit>
+            </p:layout>
+
+        </h:form>
+    </h:body>
+</html>
+```
+
+### Create PanelMenue in LEFT SIDE of the Layout
+
+In order to select the Continents and countries, I used `PrimeFaces PanelMenue` components and I put it on the left side of the Layout as follows.  
+In order to use it, I added the `p:panelMenu` tag in index.xtml.
+
+![](./images/primefaces-PanelMenu.png)
+
+
+```xml
+                <p:layoutUnit position="west" resizable="true" size="200" minSize="40" maxSize="400">
+                    <p:panelMenu id="menu" style="width:300px" model="#{countryBackingBean.model}" >
+                    </p:panelMenu>        
+                </p:layoutUnit>
+```
+
+### Create DataTable in RIGHT SIDE of the Layout
+
+In order to show the detail of the country information, I used `PrimeFaces DataTable` UI component and I put it on the right side of the Layout as follows.  
+In order to use it, I added the `p:dataTable` tag in index.xtml.
+
+![](./images/primefaces-DataTable.png)
+
+
+```xml
+                <p:layoutUnit position="center" id="center">
+                    <p:dataTable id="citydata" var="city" value="#{countryBackingBean.city}" rows="15" paginator="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="15,20,25">
+                        <p:column headerText="Id">
+                            <h:outputText value="#{city.id}" />
+                        </p:column>
+
+                        <p:column headerText="Name">
+                            <h:outputText value="#{city.name}" />
+                        </p:column>
+
+                        <p:column headerText="District">
+                            <h:outputText value="#{city.district}" />
+                        </p:column>
+
+                        <p:column headerText="Population">
+                            <h:outputText value="#{city.population}" />
+                        </p:column>
+
+
+                        <f:facet name="paginatorTopLeft">
+                            <p:commandButton type="button" icon="pi pi-refresh" />
+                        </f:facet>
+
+                        <f:facet name="paginatorBottomRight">
+                            <p:commandButton type="button" icon="pi pi-cloud-upload" />
+                        </f:facet>
+
+                    </p:dataTable>
+                </p:layoutUnit>
+```
+
+### Following is the Created index.xhtml
+
+```xml
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>World DB App</title>
+    </h:head>
+    <h:body>
+        <h:form id="mainform">
+            <p:layout id="layout" style="min-width:400px;min-height:800px;">
+                <p:layoutUnit position="west" resizable="true" size="200" minSize="40" maxSize="400">
+                    <p:panelMenu id="menu" style="width:300px" model="#{countryBackingBean.model}" >
+                    </p:panelMenu>        
+
+                </p:layoutUnit>
+
+                <p:layoutUnit position="center" id="center">
+                    <p:dataTable id="citydata" var="city" value="#{countryBackingBean.city}" rows="15" paginator="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="15,20,25">
+                        <p:column headerText="Id">
+                            <h:outputText value="#{city.id}" />
+                        </p:column>
+
+                        <p:column headerText="Name">
+                            <h:outputText value="#{city.name}" />
+                        </p:column>
+
+                        <p:column headerText="District">
+                            <h:outputText value="#{city.district}" />
+                        </p:column>
+
+                        <p:column headerText="Population">
+                            <h:outputText value="#{city.population}" />
+                        </p:column>
+
+
+                        <f:facet name="paginatorTopLeft">
+                            <p:commandButton type="button" icon="pi pi-refresh" />
+                        </f:facet>
+
+                        <f:facet name="paginatorBottomRight">
+                            <p:commandButton type="button" icon="pi pi-cloud-upload" />
+                        </f:facet>
+
+                    </p:dataTable>
+                </p:layoutUnit>
+            </p:layout>
+
+        </h:form>
+    </h:body>
+</html>
+```
+
+
 
 ## Final Directory Structure of this Project
 
