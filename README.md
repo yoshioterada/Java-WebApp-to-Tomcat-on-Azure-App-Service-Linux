@@ -1237,7 +1237,7 @@ In order to use it, I added the `p:dataTable` tag in index.xtml.
 ```
 
 ```azurecli
-$ az webapp config appsettings list --name azure-javaweb-app-1709538913002 -g MicroProfile
+$ az webapp config appsettings list --name yoshiowebapp -g WebApp
 [
   {
     "name": "JDBC_DRIVER",
