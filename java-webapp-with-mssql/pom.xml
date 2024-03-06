@@ -103,11 +103,14 @@
             <plugin>
                 <groupId>com.microsoft.azure</groupId>
                 <artifactId>azure-webapp-maven-plugin</artifactId>
-                <version>1.9.1</version>
+                <version>1.13.0</version>
                 <configuration>
+                    <auth>
+                        <type>azure_cli</type>
+                    </auth>
                     <schemaVersion>V2</schemaVersion>
                     <resourceGroup>azure-javaweb-app</resourceGroup>
-                    <appName>azure-javaweb-app</appName>
+                    <appName>azure-javaweb-app-0306</appName>
                     <pricingTier>P1v2</pricingTier>
                     <region>japaneast</region>
                     <runtime>

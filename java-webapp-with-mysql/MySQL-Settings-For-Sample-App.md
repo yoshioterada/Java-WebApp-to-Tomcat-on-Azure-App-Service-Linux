@@ -5,9 +5,9 @@
 
 ```bash
 # repalce the webapp name with yours
-WEB_APP_NAME="azure-javaweb-app"
+WEB_APP_NAME="azure-javaweb-app-0306"
 # repalce the resource group name with yours
-WEB_APP_RG_NAME="WebApp"
+WEB_APP_RG_NAME="azure-javaweb-app"
 ```
 
 ```azurecli

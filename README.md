@@ -321,13 +321,13 @@ In order to deploy the Java Web App to Azure App Service, if you configure the [
 Please execute the following command?
 
 ```azurecli
-mvn com.microsoft.azure:azure-webapp-maven-plugin:1.9.1:config
+mvn com.microsoft.azure:azure-webapp-maven-plugin:2.13.0:config
 ```
 
 If you execute the command, it will show following question. If you answer all of the qeustion, the plugin will automatically added the configuration to deploy to Azure.
 
 ```azurecli
-$ mvn com.microsoft.azure:azure-webapp-maven-plugin:1.9.1:config
+$ mvn com.microsoft.azure:azure-webapp-maven-plugin:2.13.0:config
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 [INFO] Scanning for projects...
 [INFO] 
@@ -335,7 +335,7 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 [INFO] Building azure-javaweb-app 0.0.1-SNAPSHOT
 [INFO] --------------------------------[ war ]---------------------------------
 [INFO] 
-[INFO] --- azure-webapp-maven-plugin:1.9.1:config (default-cli) @ azure-javaweb-app ---
+[INFO] --- azure-webapp-maven-plugin:2.13.0:config (default-cli) @ azure-javaweb-app ---
 
 Define value for OS(Default: Linux): 
 1. linux [*]
@@ -374,7 +374,7 @@ After finished the command, you will be able to see following additional configu
       <plugin>
         <groupId>com.microsoft.azure</groupId>
         <artifactId>azure-webapp-maven-plugin</artifactId>
-        <version>1.9.1</version>
+        <version>2.13.0</version>
         <configuration>
           <schemaVersion>V2</schemaVersion>
           <resourceGroup>azure-javaweb-app-1595955014168-rg</resourceGroup>
@@ -490,7 +490,7 @@ $ mvn clean package  azure-webapp:deploy
 [INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ azure-javaweb-app ---
 [INFO] Deleting /Users/yoterada/azure-javaweb-app/target
 
-[INFO] --- azure-webapp-maven-plugin:1.9.1:deploy (default-cli) @ azure-javaweb-app ---
+[INFO] --- azure-webapp-maven-plugin:2.13.0:deploy (default-cli) @ azure-javaweb-app ---
 [INFO] Auth Type : AZURE_CLI, Auth Files : [/Users/yoterada/.azure/azureProfile.json, /Users/yoterada/.azure/accessTokens.json]
 [INFO] [Correlation ID: 3a3d53b9-7f39-4e46-b42f-3d4c91ed34df] Instance discovery was successful
 [INFO] Subscription : Microsoft Azure Internal Billing-CDA(f77aafe8-6be4-4d3d-bd9c-d0c37687ef70)
@@ -536,7 +536,7 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 [INFO] Building azure-javaweb-app 0.0.1-SNAPSHOT
 [INFO] --------------------------------[ war ]---------------------------------
 [INFO] 
-[INFO] --- azure-webapp-maven-plugin:1.9.1:config (default-cli) @ azure-javaweb-app ---
+[INFO] --- azure-webapp-maven-plugin:2.13.0:config (default-cli) @ azure-javaweb-app ---
 Please choose which part to config
 1. Application
 2. Runtime
