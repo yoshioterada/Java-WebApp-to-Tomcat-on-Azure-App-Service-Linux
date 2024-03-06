@@ -60,12 +60,20 @@ OpenJDK 64-Bit Server VM 19.4-(Zulu-11.31+11-linux-musl-x64)-Microsoft-Azure-res
 ```
 [Java long-term support and medium-term support on Azure and Azure Stack](https://docs.microsoft.com/azure/developer/java/fundamentals/java-jdk-long-term-support?WT.mc_id=docs-github-yoterada)
 
-## Setup MySQL Server before creating the Java Web App
+## Setup Database before creating the Java Web App
+
+This application can be run on both MySQL and Azure SQL. You can set up one of them per your requirement and configure corresponding setting in Web Application.
+
+### Setup Azure Database for MySQL
 
 In order to run this application, you need to install and configure the [Azure Database for MySQL ](https://docs.microsoft.com/azure/mysql/?WT.mc_id=docs-github-yoterada) before the deploy.
 In order to install and create the MySQL, please refer to the following documents?  
 
 [Create DB for MySQL on Azure](https://github.com/yoshioterada/microprofile-samples/blob/master/MySQL/Azure-MySQL-Setup-For-Sample-App.md) for preparation of this Java Web App.
+
+### Setup Azure SQL database
+
+Follow [Setup Azure SQL database](mssql/AzureSQL-Setup-For-Sample-App.md) to create database and import world data.
 
 
 ## Create Maven Project for Java Web App
@@ -140,6 +148,8 @@ The above directory structure will be automatically created and it is created to
 ```
 
 ### Modify
+
+The following pom.xml file is for MySQL.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -248,6 +258,26 @@ The above directory structure will be automatically created and it is created to
     </build> 
 </project>
 
+```
+
+For Azure SQL, replace MySQL dependency:
+
+```xml
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.21</version>
+</dependency>
+```
+
+With SQL dependency:
+
+```xml
+<dependency>
+    <groupId>com.microsoft.sqlserver</groupId>
+    <artifactId>mssql-jdbc</artifactId>
+    <version>12.6.1.jre11</version>
+</dependency>
 ```
 
 ## Modify web.xml file
@@ -1200,96 +1230,8 @@ In order to use it, I added the `p:dataTable` tag in index.xtml.
         └── java
 ```
 
+## Database Settings in the Web Application
 
+For MySQL, see [MySQL Settings in the Web Application](mysql/MySQL-Settings-For-Sample-App.md).
 
-## MySQL Settings in the Web Application
-
-
-### Configure the environment variable values in Application settings
-
-```azurecli
- az webapp config appsettings set \
-     --resource-group WebApp \
-     --name yoshiowebapp \
-     --settings JDBC_DRIVER="com.mysql.cj.jdbc.Driver"
-```
-
-```azurecli
- az webapp config appsettings set \
-     --resource-group WebApp \
-     --name yoshiowebapp \
-     --settings JDBC_URL="jdbc:mysql://my-mysqlserver.mysql.database.azure.com:3306/world?useSSL=true&requireSSL=false&serverTimezone=JST"
-```
-
-```azurecli
-# user should be string like: azureuser@my-mysqlserver
- az webapp config appsettings set \
-     --resource-group WebApp \
-     --name yoshiowebapp \
-     --settings DB_USER="USER"
-```
-
-```azurecli
- az webapp config appsettings set \
-     --resource-group WebApp \
-     --name yoshiowebapp \
-     --settings DB_PASSWORD="PASSWORD"
-```
-
-```azurecli
-$ az webapp config appsettings list --name yoshiowebapp -g WebApp
-[
-  {
-    "name": "JDBC_DRIVER",
-    "slotSetting": false,
-    "value": "com.mysql.cj.jdbc.Driver"
-  },
-  {
-    "name": "JDBC_URL",
-    "slotSetting": false,
-    "value": "jdbc:mysql://my-mysqlserver.mysql.database.azure.com:3306/world?useSSL=true&requireSSL=false&serverTimezone=JST"
-  },
-  {
-    "name": "DB_USER",
-    "slotSetting": false,
-    "value": "azureuser@my-mysqlserver"
-  },
-  {
-    "name": "DB_PASSWORD",
-    "slotSetting": false,
-    "value": "mypassword"
-  }
-]
-```
-
-### Configure in the persistence.xml
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-    <persistence-unit name="JPAWorldDatasourcePU" transaction-type="RESOURCE_LOCAL">
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <class>com.microsoft.azure.samples.entities.City</class>
-        <class>com.microsoft.azure.samples.entities.Country</class>
-        <exclude-unlisted-classes>true</exclude-unlisted-classes>
-        <properties>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://my-mysqlserver.mysql.database.azure.com:3306/world?useSSL=true&amp;requireSSL=false&amp;serverTimezone=JST"/>
-            <property name="javax.persistence.jdbc.user" value="USER"/>
-            <property name="javax.persistence.jdbc.password" value="PASSWORD"/> 
-
-            <property name="eclipselink.cache.shared.default" value="false" />
-<!--            <property name="eclipselink.ddl-generation" value="create-tables" /> 
-            <property name="eclipselink.ddl-generation.output-mode"
-                      value="database" /> -->
-            <property name="eclipselink.logging.level" value="SEVERE" />
-        </properties>
-    </persistence-unit>
-</persistence>
-
-```
-
-***Note:***  
-In the *jdbc.url* you need to escape the "&" as "&amp";
-
-
+For Azure SQL, see [Azure SQL Settings in the Web Application](mssql/AzureSQL-Settings-For-Sample-App.md).
