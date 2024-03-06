@@ -1218,11 +1218,11 @@ In order to use it, I added the `p:dataTable` tag in index.xtml.
  az webapp config appsettings set \
      --resource-group WebApp \
      --name yoshiowebapp \
-     --settings JDBC_URL="jdbc:mysql://my-mysqlserver.mysql.database.azure.com:3306/world?
-       useSSL=true&requireSSL=false&serverTimezone=JST"
+     --settings JDBC_URL="jdbc:mysql://my-mysqlserver.mysql.database.azure.com:3306/world?useSSL=true&requireSSL=false&serverTimezone=JST"
 ```
 
 ```azurecli
+# user should be string like: azureuser@my-mysqlserver
  az webapp config appsettings set \
      --resource-group WebApp \
      --name yoshiowebapp \
@@ -1234,6 +1234,32 @@ In order to use it, I added the `p:dataTable` tag in index.xtml.
      --resource-group WebApp \
      --name yoshiowebapp \
      --settings DB_PASSWORD="PASSWORD"
+```
+
+```azurecli
+$ az webapp config appsettings list --name yoshiowebapp -g WebApp
+[
+  {
+    "name": "JDBC_DRIVER",
+    "slotSetting": false,
+    "value": "com.mysql.cj.jdbc.Driver"
+  },
+  {
+    "name": "JDBC_URL",
+    "slotSetting": false,
+    "value": "jdbc:mysql://my-mysqlserver.mysql.database.azure.com:3306/world?useSSL=true&requireSSL=false&serverTimezone=JST"
+  },
+  {
+    "name": "DB_USER",
+    "slotSetting": false,
+    "value": "azureuser@my-mysqlserver"
+  },
+  {
+    "name": "DB_PASSWORD",
+    "slotSetting": false,
+    "value": "mypassword"
+  }
+]
 ```
 
 ### Configure in the persistence.xml
