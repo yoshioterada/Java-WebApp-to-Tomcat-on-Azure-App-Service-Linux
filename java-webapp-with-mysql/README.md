@@ -25,4 +25,4 @@ Follow the steps to run this application.
 
 3. Configure database settings and restart the application following [MySQL Settings in the Web Application](MySQL-Settings-For-Sample-App.md).
 
-4. You can access the application with the URL from output.
+4. You can access the application with the URL from output. It may takes several minutes to connect to the database with correct settings.

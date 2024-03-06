@@ -328,35 +328,52 @@ If you execute the command, it will show following question. If you answer all o
 
 ```azurecli
 $ mvn com.microsoft.azure:azure-webapp-maven-plugin:2.13.0:config
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-[INFO] Scanning for projects...
-[INFO] 
-[INFO] -----------< com.microsoft.azure.samples:azure-javaweb-app >------------
-[INFO] Building azure-javaweb-app 0.0.1-SNAPSHOT
-[INFO] --------------------------------[ war ]---------------------------------
-[INFO] 
-[INFO] --- azure-webapp-maven-plugin:2.13.0:config (default-cli) @ azure-javaweb-app ---
-
-Define value for OS(Default: Linux): 
-1. linux [*]
-2. windows
-3. docker
-Enter index to use: 1
-Define value for javaVersion(Default: Java 8): 
-1. Java 11
-2. Java 8 [*]
-Enter index to use: 1
-Define value for runtimeStack(Default: TOMCAT 8.5): 
-1. TOMCAT 9.0
-2. TOMCAT 8.5 [*]
-Enter index to use: 1
+Create new run configuration (Y/N) [Y]: y
+Define value for OS [Linux]:
+  1: Windows
+* 2: Linux
+  3: Docker
+Enter your choice: 2
+Define value for javaVersion [Java 17]:
+* 1: Java 17
+  2: Java 11
+  3: Java 8
+Enter your choice: 2
+Define value for webContainer [Tomcat 10.0]:
+* 1: Tomcat 10.0
+  2: Tomcat 9.0
+  3: Tomcat 8.5
+  4: Jbosseap 7
+Enter your choice: 2
+Define value for pricingTier [P1v2]:
+   1: D1
+   2: B3
+*  3: P1v2
+   4: P1v3
+   5: P2v2
+   6: P2v3
+   7: P3v2
+   8: P3v3
+   9: B1
+  10: B2
+  11: F1
+  12: S1
+  13: S2
+  14: S3
+  15: EP3
+  16: EP2
+  17: EP1
+  18: Y1
+  19: FC1
+Enter your choice: 3
 Please confirm webapp properties
-AppName : azure-javaweb-app-1595955014168
-ResourceGroup : azure-javaweb-app-1595955014168-rg
+AppName : azure-javaweb-app-1709710313394
+ResourceGroup : azure-javaweb-app-1709710313394-rg
 Region : westeurope
-PricingTier : PremiumV2_P1v2
+PricingTier : P1v2
 OS : Linux
-RuntimeStack : TOMCAT 9.0-java11
+Java Version: Java 11
+Web server stack: Tomcat 9.0
 Deploy to slot : false
 Confirm (Y/N)? : Y
 [INFO] Saving configuration to pom.
@@ -377,8 +394,8 @@ After finished the command, you will be able to see following additional configu
         <version>2.13.0</version>
         <configuration>
           <schemaVersion>V2</schemaVersion>
-          <resourceGroup>azure-javaweb-app-1595955014168-rg</resourceGroup>
-          <appName>azure-javaweb-app-1595955014168</appName>
+          <resourceGroup>azure-javaweb-app-1709710313394-rg</resourceGroup>
+          <appName>azure-javaweb-app-1709710313394</appName>
           <pricingTier>P1v2</pricingTier>
           <region>westeurope</region>
           <runtime>
@@ -404,8 +421,8 @@ After finished the command, you will be able to see following additional configu
 
 The above configuration will create and deploy to the following environment.
 
-* Azure Resoure Group : `azure-javaweb-app-1595955014168-rg`
-* Azure Resource Name : `azure-javaweb-app-1595955014168`
+* Azure Resoure Group : `azure-javaweb-app-1709710313394-rg`
+* Azure Resource Name : `azure-javaweb-app-1709710313394`
 * Azure Resoruce Location : `westeurope`
 
 If you would like to change the Resource Group Name, Resource Name and Location, you can change the configuration like follows.
@@ -1191,13 +1208,10 @@ In order to use it, I added the `p:dataTable` tag in index.xtml.
 
 
 
-## Final Directory Structure of this Project
+## Final Directory Structure of this application
 
 ```text
 .
-├── README.md
-├── images
-│   └── screenshot.jpg
 ├── pom.xml
 └── src
     ├── main
