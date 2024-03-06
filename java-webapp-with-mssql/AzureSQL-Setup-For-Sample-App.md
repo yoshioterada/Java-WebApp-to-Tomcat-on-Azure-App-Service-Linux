@@ -11,7 +11,7 @@ Set varaibles.
 let "randomIdentifier=$RANDOM*$RANDOM"
 LOCATION="japaneast"
 MSSQL_RG_NAME="MSSQL_RG"
-TAG="create-and-configure-database"
+TAG="azure-web-application"
 SERVER_NAME="webappsqlserver0305"
 DATABASE_NAME="world"
 LOGIN_NAME="azureuser"

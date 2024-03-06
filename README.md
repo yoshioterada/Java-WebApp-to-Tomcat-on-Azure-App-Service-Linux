@@ -62,19 +62,19 @@ OpenJDK 64-Bit Server VM 19.4-(Zulu-11.31+11-linux-musl-x64)-Microsoft-Azure-res
 
 ## Setup Database before creating the Java Web App
 
+In order to run this application, you need to install and configure the database before the deploy.
+
 This application can be run with both MySQL and Azure SQL. You can set up one of them per your requirement and configure corresponding setting in Web Application.
 
 ### Setup Azure Database for MySQL
 
-In order to run this application, you need to install and configure the [Azure Database for MySQL ](https://docs.microsoft.com/azure/mysql/?WT.mc_id=docs-github-yoterada) before the deploy.
-In order to install and create the MySQL, please refer to the following documents?  
+In order to install and create the MySQL, please refer to the following documents.
 
 [Create DB for MySQL on Azure](https://github.com/yoshioterada/microprofile-samples/blob/master/MySQL/Azure-MySQL-Setup-For-Sample-App.md) for preparation of this Java Web App.
 
 ### Setup Azure SQL database
 
-Follow [Setup Azure SQL database](mssql/AzureSQL-Setup-For-Sample-App.md) to create database and import world data.
-
+Follow [Setup Azure SQL database](java-webapp-with-mssql/AzureSQL-Setup-For-Sample-App.md) to create database and import world data.
 
 ## Create Maven Project for Java Web App
 
@@ -1232,6 +1232,6 @@ In order to use it, I added the `p:dataTable` tag in index.xtml.
 
 ## Database Settings in the Web Application
 
-For MySQL, see [MySQL Settings in the Web Application](mysql/MySQL-Settings-For-Sample-App.md).
+For MySQL, see [MySQL Settings in the Web Application](java-webapp-with-mysql/MySQL-Settings-For-Sample-App.md).
 
-For Azure SQL, see [Azure SQL Settings in the Web Application](mssql/AzureSQL-Settings-For-Sample-App.md).
+For Azure SQL, see [Azure SQL Settings in the Web Application](java-webapp-with-mssql/AzureSQL-Settings-For-Sample-App.md).
