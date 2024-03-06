@@ -6,7 +6,7 @@
 This Java Web Application is not Microservices Application but standard Java Web Application which is wrote by using Java EE 8 technologies.  
 
 At first, you can select and expand the Continent (North America, Asia, Africa, Europe, South America, Oceania, Antarctica) in the left side of the menu, then you can see the countries in the Continent. Then you can select the one country, then you can see the cities where has the number of the population over 1,000,000 in right side of the screen like follows.  
-All of the data is coming from Managed [Azure Database for MySQL](https://docs.microsoft.com/azure/mysql/?WT.mc_id=docs-github-yoterada).
+Data is coming from Managed [Azure Database for MySQL](https://docs.microsoft.com/azure/mysql/?WT.mc_id=docs-github-yoterada) or Managed [Azure SQL Database](https://learn.microsoft.com/en-us/azure/azure-sql/database/sql-database-paas-overview?view=azuresql).
 
 
 ![](./images/screenshot.jpg)
@@ -62,7 +62,7 @@ OpenJDK 64-Bit Server VM 19.4-(Zulu-11.31+11-linux-musl-x64)-Microsoft-Azure-res
 
 ## Setup Database before creating the Java Web App
 
-This application can be run on both MySQL and Azure SQL. You can set up one of them per your requirement and configure corresponding setting in Web Application.
+This application can be run with both MySQL and Azure SQL. You can set up one of them per your requirement and configure corresponding setting in Web Application.
 
 ### Setup Azure Database for MySQL
 
