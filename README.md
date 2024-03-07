@@ -58,6 +58,12 @@ OpenJDK 64-Bit Server VM 19.4-(Zulu-11.31+11-linux-musl-x64)-Microsoft-Azure-res
 ```
 [Java long-term support and medium-term support on Azure and Azure Stack](https://docs.microsoft.com/azure/developer/java/fundamentals/java-jdk-long-term-support?WT.mc_id=docs-github-yoterada)
 
+
+> [!NOTE]
+> The following sections include step by step guide of how to create a Web App project and how to create the Java application.
+> You can also jump into subfolder *[java-webapp-with-mysql](java-webapp-with-mysql)* and *[java-webapp-with-mssql](java-webapp-with-mssql)* to run the application for a quick test.
+
+
 ## Setup Database before creating the Java Web App
 
 In order to run this application, you need to install and configure the database before the deploy.
@@ -73,12 +79,6 @@ In order to install and create the MySQL, please refer to the following document
 ### Setup Azure SQL database
 
 Follow [Setup Azure SQL database](java-webapp-with-mssql/AzureSQL-Setup-For-Sample-App.md) to create database and import world data.
-
-
-
-> [!NOTE]
-> The following sections include step by step guide of how to create a Web App project and how to create the Java application.
-> You can also jump into subfolder *[java-webapp-with-mysql](java-webapp-with-mysql)* and *[java-webapp-with-mssql](java-webapp-with-mssql)* to run the application for a quick test.
 
 
 ## Create Maven Project for Java Web App
