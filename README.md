@@ -74,8 +74,9 @@ In order to install and create the MySQL, please refer to the following document
 
 Follow [Setup Azure SQL database](java-webapp-with-mssql/AzureSQL-Setup-For-Sample-App.md) to create database and import world data.
 
-**The following sections include step by step guide of how to create a Web App project and how to create the Java application.**
-**You can also jump into subfolder *[java-webapp-mysql](java-webapp-mysql)* and *[java-webapp-mssql](java-webapp-mssql)* to run the application for a quick test.**
+> [!NOTE]
+> The following sections include step by step guide of how to create a Web App project and how to create the Java application.
+> You can also jump into subfolder *[java-webapp-mysql](java-webapp-mysql)* and *[java-webapp-mssql](java-webapp-mssql)* to run the application for a quick test.
 
 
 ## Create Maven Project for Java Web App
