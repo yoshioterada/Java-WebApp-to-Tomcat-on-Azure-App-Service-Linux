@@ -8,9 +8,10 @@ This Java Web Application is not Microservices Application but standard Java Web
 At first, you can select and expand the Continent (North America, Asia, Africa, Europe, South America, Oceania, Antarctica) in the left side of the menu, then you can see the countries in the Continent. Then you can select the one country, then you can see the cities where has the number of the population over 1,000,000 in right side of the screen like follows.  
 Data is coming from Managed [Azure Database for MySQL](https://docs.microsoft.com/azure/mysql/?WT.mc_id=docs-github-yoterada) or Managed [Azure SQL Database](https://learn.microsoft.com/en-us/azure/azure-sql/database/sql-database-paas-overview?view=azuresql).
 
-
 ![](./images/screenshot.jpg)
 
+The following sections include step by step guide of how to create a Web App project and how to create the Java application. 
+You can also jump into subfolder [java-webapp-myssql](java-webapp-with-mysql) and [java-webapp-mssql](java-webapp-with-mssql) to run the application for a quick test.
 
 ## Runtime selection of Azure App Service on Linux for Java
 
