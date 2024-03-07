@@ -10,9 +10,6 @@ Data is coming from Managed [Azure Database for MySQL](https://docs.microsoft.co
 
 ![](./images/screenshot.jpg)
 
-The following sections include step by step guide of how to create a Web App project and how to create the Java application. 
-You can also jump into subfolder [java-webapp-myssql](java-webapp-with-mysql) and [java-webapp-mssql](java-webapp-with-mssql) to run the application for a quick test.
-
 ## Runtime selection of Azure App Service on Linux for Java
 
 In order to confirm which Java Runtime we can use on [Azure App Service on Linux](https://docs.microsoft.com/azure/app-service/containers/app-service-linux-intro?WT.mc_id=docs-github-yoterada), you can execute the following command.  
@@ -76,6 +73,9 @@ In order to install and create the MySQL, please refer to the following document
 ### Setup Azure SQL database
 
 Follow [Setup Azure SQL database](java-webapp-with-mssql/AzureSQL-Setup-For-Sample-App.md) to create database and import world data.
+
+==The following sections include step by step guide of how to create a Web App project and how to create the Java application.==
+==You can also jump into subfolder [java-webapp-myssql](java-webapp-with-mysql) and [java-webapp-mssql](java-webapp-with-mssql) to run the application for a quick test.==
 
 ## Create Maven Project for Java Web App
 
