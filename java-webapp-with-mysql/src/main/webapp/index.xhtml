@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>World DB App</title>
+    </h:head>
+    <h:body>
+        <h:form id="mainform">
+            <p:layout id="layout" style="min-width:400px;min-height:800px;">
+                <p:layoutUnit position="west" resizable="true" size="200" minSize="40" maxSize="400">
+                    <p:panelMenu id="menu" style="width:300px" model="#{countryBackingBean.model}" >
+                    </p:panelMenu>        
+
+                </p:layoutUnit>
+
+                <p:layoutUnit position="center" id="center">
+                    <p:dataTable id="citydata" var="city" value="#{countryBackingBean.city}" rows="15" paginator="true"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="15,20,25">
+                        <p:column headerText="Id">
+                            <h:outputText value="#{city.id}" />
+                        </p:column>
+
+                        <p:column headerText="Name">
+                            <h:outputText value="#{city.name}" />
+                        </p:column>
+
+                        <p:column headerText="District">
+                            <h:outputText value="#{city.district}" />
+                        </p:column>
+
+                        <p:column headerText="Population">
+                            <h:outputText value="#{city.population}" />
+                        </p:column>
+
+
+                        <f:facet name="paginatorTopLeft">
+                            <p:commandButton type="button" icon="pi pi-refresh" />
+                        </f:facet>
+
+                        <f:facet name="paginatorBottomRight">
+                            <p:commandButton type="button" icon="pi pi-cloud-upload" />
+                        </f:facet>
+
+                    </p:dataTable>
+                </p:layoutUnit>
+            </p:layout>
+
+        </h:form>
+    </h:body>
+</html>

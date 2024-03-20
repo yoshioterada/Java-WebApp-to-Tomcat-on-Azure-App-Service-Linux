@@ -6,11 +6,9 @@
 This Java Web Application is not Microservices Application but standard Java Web Application which is wrote by using Java EE 8 technologies.  
 
 At first, you can select and expand the Continent (North America, Asia, Africa, Europe, South America, Oceania, Antarctica) in the left side of the menu, then you can see the countries in the Continent. Then you can select the one country, then you can see the cities where has the number of the population over 1,000,000 in right side of the screen like follows.  
-All of the data is coming from Managed [Azure Database for MySQL](https://docs.microsoft.com/azure/mysql/?WT.mc_id=docs-github-yoterada).
-
+Data is coming from Managed [Azure Database for MySQL](https://docs.microsoft.com/azure/mysql/?WT.mc_id=docs-github-yoterada) or Managed [Azure SQL Database](https://learn.microsoft.com/en-us/azure/azure-sql/database/sql-database-paas-overview?view=azuresql).
 
 ![](./images/screenshot.jpg)
-
 
 ## Runtime selection of Azure App Service on Linux for Java
 
@@ -60,12 +58,27 @@ OpenJDK 64-Bit Server VM 19.4-(Zulu-11.31+11-linux-musl-x64)-Microsoft-Azure-res
 ```
 [Java long-term support and medium-term support on Azure and Azure Stack](https://docs.microsoft.com/azure/developer/java/fundamentals/java-jdk-long-term-support?WT.mc_id=docs-github-yoterada)
 
-## Setup MySQL Server before creating the Java Web App
 
-In order to run this application, you need to install and configure the [Azure Database for MySQL ](https://docs.microsoft.com/azure/mysql/?WT.mc_id=docs-github-yoterada) before the deploy.
-In order to install and create the MySQL, please refer to the following documents?  
+> [!NOTE]
+> The following sections include step by step guide of how to create a Web App project and how to create the Java application.
+> You can also jump into subfolder *[java-webapp-with-mysql](java-webapp-with-mysql)* and *[java-webapp-with-mssql](java-webapp-with-mssql)* to run the application for a quick test.
+
+
+## Setup Database before creating the Java Web App
+
+In order to run this application, you need to install and configure the database before the deploy.
+
+This application can be run with both MySQL and Azure SQL. You can set up one of them per your requirement and configure corresponding setting in Web Application.
+
+### Setup Azure Database for MySQL
+
+In order to install and create the MySQL, please refer to the following documents.
 
 [Create DB for MySQL on Azure](https://github.com/yoshioterada/microprofile-samples/blob/master/MySQL/Azure-MySQL-Setup-For-Sample-App.md) for preparation of this Java Web App.
+
+### Setup Azure SQL database
+
+Follow [Setup Azure SQL database](java-webapp-with-mssql/AzureSQL-Setup-For-Sample-App.md) to create database and import world data.
 
 
 ## Create Maven Project for Java Web App
@@ -140,6 +153,8 @@ The above directory structure will be automatically created and it is created to
 ```
 
 ### Modify
+
+The following pom.xml file is for MySQL.
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -250,6 +265,26 @@ The above directory structure will be automatically created and it is created to
 
 ```
 
+For Azure SQL, replace MySQL dependency:
+
+```xml
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.21</version>
+</dependency>
+```
+
+With SQL dependency:
+
+```xml
+<dependency>
+    <groupId>com.microsoft.sqlserver</groupId>
+    <artifactId>mssql-jdbc</artifactId>
+    <version>12.6.1.jre11</version>
+</dependency>
+```
+
 ## Modify web.xml file
 
 ```xml
@@ -291,42 +326,59 @@ In order to deploy the Java Web App to Azure App Service, if you configure the [
 Please execute the following command?
 
 ```azurecli
-mvn com.microsoft.azure:azure-webapp-maven-plugin:1.9.1:config
+mvn com.microsoft.azure:azure-webapp-maven-plugin:2.13.0:config
 ```
 
 If you execute the command, it will show following question. If you answer all of the qeustion, the plugin will automatically added the configuration to deploy to Azure.
 
 ```azurecli
-$ mvn com.microsoft.azure:azure-webapp-maven-plugin:1.9.1:config
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-[INFO] Scanning for projects...
-[INFO] 
-[INFO] -----------< com.microsoft.azure.samples:azure-javaweb-app >------------
-[INFO] Building azure-javaweb-app 0.0.1-SNAPSHOT
-[INFO] --------------------------------[ war ]---------------------------------
-[INFO] 
-[INFO] --- azure-webapp-maven-plugin:1.9.1:config (default-cli) @ azure-javaweb-app ---
-
-Define value for OS(Default: Linux): 
-1. linux [*]
-2. windows
-3. docker
-Enter index to use: 1
-Define value for javaVersion(Default: Java 8): 
-1. Java 11
-2. Java 8 [*]
-Enter index to use: 1
-Define value for runtimeStack(Default: TOMCAT 8.5): 
-1. TOMCAT 9.0
-2. TOMCAT 8.5 [*]
-Enter index to use: 1
+$ mvn com.microsoft.azure:azure-webapp-maven-plugin:2.13.0:config
+Create new run configuration (Y/N) [Y]: y
+Define value for OS [Linux]:
+  1: Windows
+* 2: Linux
+  3: Docker
+Enter your choice: 2
+Define value for javaVersion [Java 17]:
+* 1: Java 17
+  2: Java 11
+  3: Java 8
+Enter your choice: 2
+Define value for webContainer [Tomcat 10.0]:
+* 1: Tomcat 10.0
+  2: Tomcat 9.0
+  3: Tomcat 8.5
+  4: Jbosseap 7
+Enter your choice: 2
+Define value for pricingTier [P1v2]:
+   1: D1
+   2: B3
+*  3: P1v2
+   4: P1v3
+   5: P2v2
+   6: P2v3
+   7: P3v2
+   8: P3v3
+   9: B1
+  10: B2
+  11: F1
+  12: S1
+  13: S2
+  14: S3
+  15: EP3
+  16: EP2
+  17: EP1
+  18: Y1
+  19: FC1
+Enter your choice: 3
 Please confirm webapp properties
-AppName : azure-javaweb-app-1595955014168
-ResourceGroup : azure-javaweb-app-1595955014168-rg
+AppName : azure-javaweb-app-1709710313394
+ResourceGroup : azure-javaweb-app-1709710313394-rg
 Region : westeurope
-PricingTier : PremiumV2_P1v2
+PricingTier : P1v2
 OS : Linux
-RuntimeStack : TOMCAT 9.0-java11
+Java Version: Java 11
+Web server stack: Tomcat 9.0
 Deploy to slot : false
 Confirm (Y/N)? : Y
 [INFO] Saving configuration to pom.
@@ -344,11 +396,11 @@ After finished the command, you will be able to see following additional configu
       <plugin>
         <groupId>com.microsoft.azure</groupId>
         <artifactId>azure-webapp-maven-plugin</artifactId>
-        <version>1.9.1</version>
+        <version>2.13.0</version>
         <configuration>
           <schemaVersion>V2</schemaVersion>
-          <resourceGroup>azure-javaweb-app-1595955014168-rg</resourceGroup>
-          <appName>azure-javaweb-app-1595955014168</appName>
+          <resourceGroup>azure-javaweb-app-1709710313394-rg</resourceGroup>
+          <appName>azure-javaweb-app-1709710313394</appName>
           <pricingTier>P1v2</pricingTier>
           <region>westeurope</region>
           <runtime>
@@ -374,8 +426,8 @@ After finished the command, you will be able to see following additional configu
 
 The above configuration will create and deploy to the following environment.
 
-* Azure Resoure Group : `azure-javaweb-app-1595955014168-rg`
-* Azure Resource Name : `azure-javaweb-app-1595955014168`
+* Azure Resoure Group : `azure-javaweb-app-1709710313394-rg`
+* Azure Resource Name : `azure-javaweb-app-1709710313394`
 * Azure Resoruce Location : `westeurope`
 
 If you would like to change the Resource Group Name, Resource Name and Location, you can change the configuration like follows.
@@ -460,7 +512,7 @@ $ mvn clean package  azure-webapp:deploy
 [INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ azure-javaweb-app ---
 [INFO] Deleting /Users/yoterada/azure-javaweb-app/target
 
-[INFO] --- azure-webapp-maven-plugin:1.9.1:deploy (default-cli) @ azure-javaweb-app ---
+[INFO] --- azure-webapp-maven-plugin:2.13.0:deploy (default-cli) @ azure-javaweb-app ---
 [INFO] Auth Type : AZURE_CLI, Auth Files : [/Users/yoterada/.azure/azureProfile.json, /Users/yoterada/.azure/accessTokens.json]
 [INFO] [Correlation ID: 3a3d53b9-7f39-4e46-b42f-3d4c91ed34df] Instance discovery was successful
 [INFO] Subscription : Microsoft Azure Internal Billing-CDA(f77aafe8-6be4-4d3d-bd9c-d0c37687ef70)
@@ -506,7 +558,7 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 [INFO] Building azure-javaweb-app 0.0.1-SNAPSHOT
 [INFO] --------------------------------[ war ]---------------------------------
 [INFO] 
-[INFO] --- azure-webapp-maven-plugin:1.9.1:config (default-cli) @ azure-javaweb-app ---
+[INFO] --- azure-webapp-maven-plugin:2.13.0:config (default-cli) @ azure-javaweb-app ---
 Please choose which part to config
 1. Application
 2. Runtime
@@ -1161,13 +1213,10 @@ In order to use it, I added the `p:dataTable` tag in index.xtml.
 
 
 
-## Final Directory Structure of this Project
+## Final Directory Structure of this application
 
 ```text
 .
-├── README.md
-├── images
-│   └── screenshot.jpg
 ├── pom.xml
 └── src
     ├── main
@@ -1200,96 +1249,8 @@ In order to use it, I added the `p:dataTable` tag in index.xtml.
         └── java
 ```
 
+## Database Settings in the Web Application
 
+For MySQL, see [MySQL Settings in the Web Application](java-webapp-with-mysql/MySQL-Settings-For-Sample-App.md).
 
-## MySQL Settings in the Web Application
-
-
-### Configure the environment variable values in Application settings
-
-```azurecli
- az webapp config appsettings set \
-     --resource-group WebApp \
-     --name yoshiowebapp \
-     --settings JDBC_DRIVER="com.mysql.cj.jdbc.Driver"
-```
-
-```azurecli
- az webapp config appsettings set \
-     --resource-group WebApp \
-     --name yoshiowebapp \
-     --settings JDBC_URL="jdbc:mysql://my-mysqlserver.mysql.database.azure.com:3306/world?useSSL=true&requireSSL=false&serverTimezone=JST"
-```
-
-```azurecli
-# user should be string like: azureuser@my-mysqlserver
- az webapp config appsettings set \
-     --resource-group WebApp \
-     --name yoshiowebapp \
-     --settings DB_USER="USER"
-```
-
-```azurecli
- az webapp config appsettings set \
-     --resource-group WebApp \
-     --name yoshiowebapp \
-     --settings DB_PASSWORD="PASSWORD"
-```
-
-```azurecli
-$ az webapp config appsettings list --name yoshiowebapp -g WebApp
-[
-  {
-    "name": "JDBC_DRIVER",
-    "slotSetting": false,
-    "value": "com.mysql.cj.jdbc.Driver"
-  },
-  {
-    "name": "JDBC_URL",
-    "slotSetting": false,
-    "value": "jdbc:mysql://my-mysqlserver.mysql.database.azure.com:3306/world?useSSL=true&requireSSL=false&serverTimezone=JST"
-  },
-  {
-    "name": "DB_USER",
-    "slotSetting": false,
-    "value": "azureuser@my-mysqlserver"
-  },
-  {
-    "name": "DB_PASSWORD",
-    "slotSetting": false,
-    "value": "mypassword"
-  }
-]
-```
-
-### Configure in the persistence.xml
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-    <persistence-unit name="JPAWorldDatasourcePU" transaction-type="RESOURCE_LOCAL">
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <class>com.microsoft.azure.samples.entities.City</class>
-        <class>com.microsoft.azure.samples.entities.Country</class>
-        <exclude-unlisted-classes>true</exclude-unlisted-classes>
-        <properties>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://my-mysqlserver.mysql.database.azure.com:3306/world?useSSL=true&amp;requireSSL=false&amp;serverTimezone=JST"/>
-            <property name="javax.persistence.jdbc.user" value="USER"/>
-            <property name="javax.persistence.jdbc.password" value="PASSWORD"/> 
-
-            <property name="eclipselink.cache.shared.default" value="false" />
-<!--            <property name="eclipselink.ddl-generation" value="create-tables" /> 
-            <property name="eclipselink.ddl-generation.output-mode"
-                      value="database" /> -->
-            <property name="eclipselink.logging.level" value="SEVERE" />
-        </properties>
-    </persistence-unit>
-</persistence>
-
-```
-
-***Note:***  
-In the *jdbc.url* you need to escape the "&" as "&amp";
-
-
+For Azure SQL, see [Azure SQL Settings in the Web Application](java-webapp-with-mssql/AzureSQL-Settings-For-Sample-App.md).
